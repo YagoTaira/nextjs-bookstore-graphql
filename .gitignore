@@ -1,5 +1,32 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# Playwright
+playwright-report/
+test-results/
+.screenshots/
+screenshot*.png
+
+# MongoDB
+/dump/
+*.mongodb
+
+# Logs (general)
+*.log
+logs/
+
+# Cache
+.cache/
+.vscode/
+
+# OS/system files
+Thumbs.db
+*.swp
+*.swo
+
+# Ignore build artifacts from custom scripts
+/dist/
+/build/
+
 # dependencies
 /node_modules
 /.pnp

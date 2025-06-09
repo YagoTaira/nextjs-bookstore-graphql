@@ -1,0 +1,10 @@
+query BookListQuery {
+  books {
+    _id
+    id
+    title
+    author
+    description
+    imageUrl
+  }
+}

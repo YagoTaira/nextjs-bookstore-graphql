@@ -6,22 +6,50 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "relay": "relay-compiler",
+    "seed": "tsx scripts/seed.ts",
+    "test": "playwright test",
+    "seed:test-user": "tsx scripts/seed-test-user.ts"
   },
   "dependencies": {
+    "bcryptjs": "^3.0.2",
+    "dotenv": "^16.5.0",
+    "graphql": "^16.11.0",
+    "graphql-tag": "^2.12.6",
+    "graphql-yoga": "^5.13.5",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.15.1",
+    "next": "15.3.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "next": "15.3.2"
+    "react-hot-toast": "^2.5.2",
+    "react-relay": "^19.0.0",
+    "relay-runtime": "^19.0.0"
   },
   "devDependencies": {
-    "typescript": "^5",
+    "@eslint/eslintrc": "^3",
+    "@playwright/test": "^1.52.0",
+    "@tailwindcss/postcss": "^4",
+    "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "@tailwindcss/postcss": "^4",
-    "tailwindcss": "^4",
+    "@types/react-relay": "^18.2.1",
+    "@types/relay-runtime": "^19.0.1",
+    "babel-plugin-relay": "^19.0.0",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
-    "@eslint/eslintrc": "^3"
+    "relay-compiler": "^19.0.0",
+    "tailwindcss": "^4",
+    "ts-node": "^10.9.2",
+    "tsconfig-paths": "^4.2.0",
+    "tsx": "^4.19.4",
+    "typescript": "^5"
+  },
+  "relay": {
+    "src": "./src",
+    "schema": "./src/graphql/schema/schema.graphql",
+    "language": "typescript"
   }
 }

@@ -1,0 +1,10 @@
+mutation addBookMutation($input: AddBookInput!) {
+  addBook(input: $input) {
+    id
+    title
+    author
+    description
+    price
+    imageUrl
+  }
+}
