@@ -1,6 +1,6 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, request } from "@playwright/test";
 
-test("should allow user to register", async ({ page }) => {
+test("should allow user to register", async ({ page, baseURL }) => {
   const timestamp = Date.now(); // To ensure a unique user each test
   const testUsername = `user${timestamp}`;
   const testPassword = `Test@${timestamp}`;
@@ -21,4 +21,10 @@ test("should allow user to register", async ({ page }) => {
 
   // Confirm login page rendered
   await expect(page.getByRole("heading", { name: "Login" })).toBeVisible();
+
+  // Cleanup: delete user after test
+  const context = await request.newContext();
+  await context.post(`${baseURL}/api/cleanup-user`, {
+    data: { username: testUsername },
+  });
 });

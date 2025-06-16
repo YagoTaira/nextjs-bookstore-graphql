@@ -12,7 +12,7 @@ test("should log out the user", async ({ page }) => {
   await page.getByRole("button", { name: "Login" }).click();
 
   // Expect redirect to homepage
-  await expect(page).toHaveURL("/");
+  await expect(page).toHaveURL("/books");
 
   // Assert user-specific UI
   await expect(page.locator("text=Logout")).toBeVisible();

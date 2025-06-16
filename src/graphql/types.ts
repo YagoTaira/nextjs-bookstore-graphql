@@ -7,3 +7,7 @@ export type Book = {
   price: number;
   imageUrl?: string | null;
 };
+
+export type CartItem = Book & {
+  quantity: number;
+};

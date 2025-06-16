@@ -20,15 +20,15 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
 
-    try {
-      await login(form.username, form.password);
-      router.push("/");
-    } catch (err) {
-      console.error("Login failed", err);
-      setError("Invalid username or password");
-    } finally {
+    const errorMessage = await login(form.username, form.password);
+
+    if (errorMessage) {
+      setError(errorMessage);
       setLoading(false);
+      return;
     }
+
+    router.push("/books");
   };
 
   return (

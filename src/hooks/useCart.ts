@@ -1,75 +1,108 @@
-import { useEffect, useState } from "react";
-import { Book } from "@/graphql/types";
+"use client";
 
-type CartItem = Book & {
-  id: string;
-  quantity: number;
-};
+import { useEffect, useState } from "react";
+import { Book, CartItem } from "@/graphql/types";
 
 export function useCart() {
-  const [cart, setCart] = useState<CartItem[]>([]);
-  const [hydrated, setHydrated] = useState(false);
+  const [cart, setCart] = useState<CartItem[] | null>(null);
 
-  // Load cart from localStorage
+  // Fetch cart from server
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem("cart");
-      if (stored) {
-        const parsed: CartItem[] = JSON.parse(stored);
-        setCart(parsed);
+    const loadCart = async () => {
+      try {
+        const res = await fetch("/api/cart", {
+          method: "GET",
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error("Failed to load cart");
+        const data = await res.json();
+        setCart(data.items || []);
+      } catch (err) {
+        console.error("Error loading cart:", err);
+        setCart([]);
       }
-    } catch (err) {
-      console.error("Failed to load cart:", err);
-    } finally {
-      setHydrated(true);
-    }
+    };
+
+    loadCart();
   }, []);
 
-  // Persist cart to localStorage
-  useEffect(() => {
-    if (hydrated) {
-      localStorage.setItem("cart", JSON.stringify(cart));
+  // Save cart to backend
+  const saveCart = async (items: CartItem[]) => {
+    try {
+      await fetch("/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({
+          items: items.map((item) => ({
+            bookId: item._id || item.id,
+            quantity: item.quantity,
+          })),
+        }),
+      });
+    } catch (err) {
+      console.error("Failed to save cart:", err);
     }
-  }, [cart, hydrated]);
+  };
 
-  const addToCart = (book: Book) => {
-    if (!book.id) {
-      console.warn("Cannot add book without id to cart.");
+  const addToCart = async (book: Book) => {
+    if (!book._id && !book.id) return;
+    const bookId = book._id || book.id;
+
+    setCart((prev) => {
+      const current = prev || [];
+      const index = current.findIndex((b) => (b._id || b.id) === bookId);
+      let updated: CartItem[];
+      if (index !== -1) {
+        updated = [...current];
+        updated[index].quantity += 1;
+      } else {
+        updated = [...current, { ...book, quantity: 1 }];
+      }
+      saveCart(updated);
+      return updated;
+    });
+  };
+
+  const updateQuantity = async (id: string, quantity: number) => {
+    if (quantity <= 0) {
+      await removeFromCart(id);
       return;
     }
 
     setCart((prev) => {
-      const index = prev.findIndex((b) => b.id === book.id);
-      if (index !== -1) {
-        const updated = [...prev];
-        updated[index].quantity += 1;
-        return updated;
-      }
-      return [...prev, { ...book, quantity: 1 } as CartItem];
+      const current = prev || [];
+      const updated = current.map((b) =>
+        (b._id || b.id) === id ? { ...b, quantity } : b
+      );
+      saveCart(updated);
+      return updated;
     });
   };
 
-  const updateQuantity = (id: string, quantity: number) => {
-    if (quantity <= 0) {
-      removeFromCart(id);
-      return;
-    }
-
-    setCart((prev) => prev.map((b) => (b.id === id ? { ...b, quantity } : b)));
+  const removeFromCart = async (id: string) => {
+    setCart((prev) => {
+      console.log("Removing book ID:", id);
+      console.log(
+        "Current cart IDs:",
+        (prev || []).map((b) => b._id || b.id)
+      );
+      const current = prev || [];
+      const updated = current.filter((b) => (b._id || b.id)?.toString() !== id);
+      saveCart(updated);
+      return updated;
+    });
   };
 
-  const removeFromCart = (id: string) => {
-    setCart((prev) => prev.filter((b) => b.id !== id));
-  };
-
-  const isInCart = (id: string) => cart.some((b) => b.id === id);
+  const isInCart = (id: string) =>
+    cart?.some((b) => (b._id || b.id) === id) ?? false;
 
   return {
-    cart,
+    cart: cart ?? [],
     addToCart,
     removeFromCart,
     updateQuantity,
     isInCart,
-    hydrated,
+    hydrated: cart !== null,
   };
 }

@@ -7,8 +7,6 @@ export function Navbar() {
   const { user, isLoggedIn, logout, loading } = useAuth();
 
   if (loading) return null;
-  console.log("Navbar: user =", user);
-  console.log("Navbar: isLoggedIn =", isLoggedIn);
 
   return (
     <nav className="bg-white shadow-md px-6 py-4 sticky top-0 z-50">

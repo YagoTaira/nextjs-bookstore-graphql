@@ -1,7 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 
 type User = {
   username: string;
@@ -11,7 +17,7 @@ type User = {
 type AuthContextType = {
   isLoggedIn: boolean;
   user: User | null;
-  login: (username: string, password: string) => Promise<void>;
+  login: (username: string, password: string) => Promise<string | null>;
   logout: () => Promise<void>;
   loading: boolean;
 };
@@ -24,63 +30,88 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
   useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem("user");
-      if (storedUser && storedUser !== "undefined") {
-        setUser(JSON.parse(storedUser));
-      } else {
-        localStorage.removeItem("user");
+    const fetchUser = async () => {
+      try {
+        const res = await fetch("/api/me", {
+          method: "GET",
+          credentials: "include",
+        });
+
+        if (!res.ok) {
+          if (res.status !== 401) {
+            console.error("Unexpected error in /api/me", res.status);
+          }
+          setUser(null);
+          return;
+        }
+
+        const data = await res.json();
+        setUser(data.user);
+      } catch (err) {
+        console.error("Failed to fetch user:", err);
+        setUser(null);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      console.error("Failed to parse user from localStorage:", err);
-      localStorage.removeItem("user");
-    } finally {
-      setLoading(false);
-    }
+    };
+
+    fetchUser();
   }, []);
 
-  const login = async (username: string, password: string) => {
+  const login = async (
+    username: string,
+    password: string
+  ): Promise<string | null> => {
     try {
       const res = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ username, password }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.error || "Login failed");
+        setUser(null);
+        return "Invalid username or password";
       }
 
       setUser(data.user);
-      localStorage.setItem("user", JSON.stringify(data.user));
       router.refresh();
-    } catch (err: any) {
-      throw new Error(err.message || "An unexpected error occurred");
+      router.push("/books");
+      return null;
+    } catch {
+      return "An unexpected error occurred";
     }
   };
 
   const logout = async () => {
-    await fetch("/api/logout", { method: "DELETE" });
-    localStorage.removeItem("user");
-    setUser(null);
-    router.push("/login");
+    try {
+      await fetch("/api/logout", {
+        method: "DELETE",
+        credentials: "include",
+      });
+    } catch {
+      // Ignore logout errors
+    } finally {
+      setUser(null);
+      router.push("/login");
+    }
   };
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        isLoggedIn: !!user,
-        login,
-        logout,
-        loading,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
+  const value = useMemo(
+    () => ({
+      user,
+      isLoggedIn: !!user,
+      login,
+      logout,
+      loading,
+    }),
+    [user, loading]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
 
 export const useAuth = () => {

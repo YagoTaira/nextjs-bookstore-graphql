@@ -109,7 +109,9 @@ function CartPage() {
 
             <div className="mt-6 flex justify-end">
               <button
-                onClick={() => removeFromCart(book.id)}
+                onClick={() =>
+                  removeFromCart((book._id ?? book.id)!.toString())
+                }
                 className="px-4 py-2 rounded-md text-white font-medium bg-red-600 hover:bg-red-700 text-sm"
               >
                 Remove from Cart
