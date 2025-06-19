@@ -154,8 +154,6 @@ book-store-app/
 
 ## 📌 To Do
 
-- Persist user-specific data in the database
-- Synchronize data globally when admin updates the book list
 - Enable admin to edit book details
 - Add more tests
 - Deploy the application
