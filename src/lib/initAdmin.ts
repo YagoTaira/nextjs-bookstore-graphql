@@ -5,8 +5,8 @@ export async function ensureAdminUserExists() {
   const adminUsername = process.env.ADMIN_USERNAME!;
   const adminPassword = process.env.ADMIN_PASSWORD!;
 
-  const testAdminUsername = process.env.TEST_ADMIN_USERNAME!;
-  const testAdminPassword = process.env.TEST_ADMIN_PASSWORD!;
+  //const testAdminUsername = process.env.TEST_ADMIN_USERNAME!;
+  //const testAdminPassword = process.env.TEST_ADMIN_PASSWORD!;
 
   // Ensure main admin exists
   const existingAdmin = await User.findOne({ username: adminUsername });
@@ -17,6 +17,6 @@ export async function ensureAdminUserExists() {
       password: hashedPassword,
       role: "admin",
     });
-    console.log("✅ Admin user created");
+    //console.log("✅ Admin user created");
   }
 }

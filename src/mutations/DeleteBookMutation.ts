@@ -22,11 +22,11 @@ export function useDeleteBookMutation() {
     commit({
       variables: { id },
       onCompleted: () => {
-        console.log("Book deleted");
+        //console.log("Book deleted");
         onCompleted?.();
       },
       onError: (err) => {
-        console.error("Delete error:", err);
+        //console.error("Delete error:", err);
         onError?.(err);
       },
       updater: (store) => {

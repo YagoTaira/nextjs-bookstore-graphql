@@ -58,8 +58,8 @@ export default function RegisterPage() {
       }
 
       router.push("/login");
-    } catch (err) {
-      console.error("Registration failed", err);
+    } catch {
+      //console.error("Registration failed", err);
       setError("Something went wrong.");
     } finally {
       setLoading(false);

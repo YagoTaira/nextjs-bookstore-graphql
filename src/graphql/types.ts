@@ -1,5 +1,7 @@
-export type Book = {
-  id: any;
+import { BookType } from "@/models/models";
+
+export type BookGQL = {
+  id: string;
   _id?: string;
   title: string;
   author: string;
@@ -8,6 +10,8 @@ export type Book = {
   imageUrl?: string | null;
 };
 
-export type CartItem = Book & {
+export type CartItemGQL = BookGQL & {
   quantity: number;
 };
+
+export type BookWithId = BookType & { _id: string };

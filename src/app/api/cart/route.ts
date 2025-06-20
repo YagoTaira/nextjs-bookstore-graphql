@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { Cart } from "@/models/Cart";
 import { getUserFromRequest } from "@/lib/getUser";
+import { BookType } from "@/models/models";
+import { CartItemGQL } from "@/graphql/types";
 
 export async function GET(req: NextRequest) {
   await connectToDatabase();
@@ -17,18 +19,23 @@ export async function GET(req: NextRequest) {
   }
 
   const items = cart.items
-    .filter((item: { bookId: any }) => item.bookId)
-    .map((item: { bookId: { toObject: () => any }; quantity: any }) => {
-      const book =
-        typeof item.bookId.toObject === "function"
-          ? item.bookId.toObject()
-          : item.bookId;
+    .filter((item: { bookId: BookType }) => item.bookId)
+    .map(
+      (item: {
+        bookId: { toObject: () => BookType };
+        quantity: CartItemGQL;
+      }) => {
+        const book =
+          typeof item.bookId.toObject === "function"
+            ? item.bookId.toObject()
+            : item.bookId;
 
-      return {
-        ...book,
-        quantity: item.quantity,
-      };
-    });
+        return {
+          ...book,
+          quantity: item.quantity,
+        };
+      }
+    );
 
   return NextResponse.json({ items });
 }
@@ -40,18 +47,18 @@ export async function POST(req: NextRequest) {
   if (!user)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  const { items } = await req.json();
+  //const { items } = await req.json();
 
-  const normalizedItems = items.map((item: any) => ({
-    bookId: item.bookId,
-    quantity: item.quantity,
-  }));
+  //const normalizedItems = items.map((item: any) => ({
+  //  bookId: item.bookId,
+  //  quantity: item.quantity,
+  //}));
 
-  const updatedCart = await Cart.findOneAndUpdate(
-    { userId: user.id },
-    { items: normalizedItems },
-    { upsert: true, new: true }
-  );
+  //const updatedCart = await Cart.findOneAndUpdate(
+  //  { userId: user.id },
+  //  { items: normalizedItems },
+  //  { upsert: true, new: true }
+  //);
 
   return NextResponse.json({ message: "Cart updated" });
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { PreloadedQuery, usePreloadedQuery, useMutation } from "react-relay";
+import { PreloadedQuery, usePreloadedQuery } from "react-relay";
 import { bookListQuery } from "@/queries/BookListQuery";
 import type { BookListQuery } from "@/queries/__generated__/BookListQuery.graphql";
 import Link from "next/link";

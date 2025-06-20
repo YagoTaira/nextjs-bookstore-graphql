@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Book } from "@/graphql/types";
+import { BookGQL } from "@/graphql/types";
 
 export function useFavourites() {
-  const [favourites, setFavourites] = useState<Book[] | null>(null);
+  const [favourites, setFavourites] = useState<BookGQL[] | null>(null);
 
   useEffect(() => {
     const loadFavourites = async () => {
@@ -16,8 +16,8 @@ export function useFavourites() {
         if (!res.ok) throw new Error("Failed to load favourites");
         const data = await res.json();
         setFavourites(data.favourites || data);
-      } catch (err) {
-        console.error("Error loading favourites:", err);
+      } catch {
+        //console.error("Error loading favourites:", err);
         setFavourites([]);
       }
     };
@@ -25,7 +25,7 @@ export function useFavourites() {
     loadFavourites();
   }, []);
 
-  const toggleFavourite = async (book: Book) => {
+  const toggleFavourite = async (book: BookGQL) => {
     if (favourites === null) return;
 
     const exists = favourites.some((b) => b._id === book._id);
@@ -49,8 +49,8 @@ export function useFavourites() {
           return [...prev, { ...book }];
         }
       });
-    } catch (err) {
-      console.error("Error toggling favourite:", err);
+    } catch {
+      //console.error("Error toggling favourite:", err);
     }
   };
 

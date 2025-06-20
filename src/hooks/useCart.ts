@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Book, CartItem } from "@/graphql/types";
+import { BookGQL, CartItemGQL } from "@/graphql/types";
 
 export function useCart() {
-  const [cart, setCart] = useState<CartItem[] | null>(null);
+  const [cart, setCart] = useState<CartItemGQL[] | null>(null);
 
   // Fetch cart from server
   useEffect(() => {
@@ -17,8 +17,8 @@ export function useCart() {
         if (!res.ok) throw new Error("Failed to load cart");
         const data = await res.json();
         setCart(data.items || []);
-      } catch (err) {
-        console.error("Error loading cart:", err);
+      } catch {
+        //console.error("Error loading cart:", err);
         setCart([]);
       }
     };
@@ -27,7 +27,7 @@ export function useCart() {
   }, []);
 
   // Save cart to backend
-  const saveCart = async (items: CartItem[]) => {
+  const saveCart = async (items: CartItemGQL[]) => {
     try {
       await fetch("/api/cart", {
         method: "POST",
@@ -45,14 +45,14 @@ export function useCart() {
     }
   };
 
-  const addToCart = async (book: Book) => {
+  const addToCart = async (book: BookGQL) => {
     if (!book._id && !book.id) return;
     const bookId = book._id || book.id;
 
     setCart((prev) => {
       const current = prev || [];
       const index = current.findIndex((b) => (b._id || b.id) === bookId);
-      let updated: CartItem[];
+      let updated: CartItemGQL[];
       if (index !== -1) {
         updated = [...current];
         updated[index].quantity += 1;
@@ -82,11 +82,11 @@ export function useCart() {
 
   const removeFromCart = async (id: string) => {
     setCart((prev) => {
-      console.log("Removing book ID:", id);
-      console.log(
-        "Current cart IDs:",
-        (prev || []).map((b) => b._id || b.id)
-      );
+      //console.log("Removing book ID:", id);
+      //console.log(
+      //  "Current cart IDs:",
+      //  (prev || []).map((b) => b._id || b.id)
+      //);
       const current = prev || [];
       const updated = current.filter((b) => (b._id || b.id)?.toString() !== id);
       saveCart(updated);

@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import React, {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -39,7 +40,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         if (!res.ok) {
           if (res.status !== 401) {
-            console.error("Unexpected error in /api/me", res.status);
+            //console.error("Unexpected error in /api/me", res.status);
           }
           setUser(null);
           return;
@@ -47,8 +48,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         const data = await res.json();
         setUser(data.user);
-      } catch (err) {
-        console.error("Failed to fetch user:", err);
+      } catch {
+        //console.error("Failed to fetch user:", err);
         setUser(null);
       } finally {
         setLoading(false);
@@ -58,35 +59,35 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     fetchUser();
   }, []);
 
-  const login = async (
-    username: string,
-    password: string
-  ): Promise<string | null> => {
-    try {
-      const res = await fetch("/api/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ username, password }),
-      });
+  const login = useCallback(
+    async (username: string, password: string) => {
+      try {
+        const res = await fetch("/api/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({ username, password }),
+        });
 
-      const data = await res.json();
+        const data = await res.json();
 
-      if (!res.ok) {
-        setUser(null);
-        return "Invalid username or password";
+        if (!res.ok) {
+          setUser(null);
+          return "Invalid username or password";
+        }
+
+        setUser(data.user);
+        router.refresh();
+        router.push("/books");
+        return null;
+      } catch {
+        return "An unexpected error occurred";
       }
+    },
+    [router]
+  );
 
-      setUser(data.user);
-      router.refresh();
-      router.push("/books");
-      return null;
-    } catch {
-      return "An unexpected error occurred";
-    }
-  };
-
-  const logout = async () => {
+  const logout = useCallback(async () => {
     try {
       await fetch("/api/logout", {
         method: "DELETE",
@@ -98,7 +99,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(null);
       router.push("/login");
     }
-  };
+  }, [router]);
 
   const value = useMemo(
     () => ({
@@ -108,7 +109,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       logout,
       loading,
     }),
-    [user, loading]
+    [user, loading, login, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

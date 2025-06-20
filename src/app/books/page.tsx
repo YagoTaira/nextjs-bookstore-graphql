@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useQueryLoader } from "react-relay/hooks";
 import { bookListQuery } from "@/queries/BookListQuery";
 import type { BookListQuery } from "@/queries/__generated__/BookListQuery.graphql";

@@ -30,8 +30,8 @@ export default async function handler(
     });
 
     return res.status(201).json(newBook);
-  } catch (error) {
-    console.error("Error creating book:", error);
+  } catch {
+    //console.error("Error creating book:", error);
     return res.status(500).json({ message: "Something went wrong" });
   }
 }

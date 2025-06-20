@@ -31,12 +31,12 @@ export function useAddBookMutation() {
   ) => {
     commit({
       variables: { input },
-      onCompleted: (data) => {
-        console.log("Book added!", data);
+      onCompleted: () => {
+        //console.log("Book added!", data);
         onCompleted?.();
       },
       onError: (err) => {
-        console.error(err);
+        //console.error(err);
         onError?.(err);
       },
     });

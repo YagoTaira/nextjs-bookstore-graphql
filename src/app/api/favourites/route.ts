@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/db";
 import { Favourite } from "@/models/Favourite";
 import { getUserFromRequest } from "@/lib/getUser";
-import { Book } from "@/models/Book";
 
 export async function GET(req: NextRequest) {
   await connectToDatabase();

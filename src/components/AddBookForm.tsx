@@ -53,7 +53,7 @@ export function AddBookForm({ onBookAdded }: Props) {
     const data = await res.json();
 
     if (!res.ok) {
-      console.error("Cloudinary Upload Error:", JSON.stringify(data, null, 2));
+      //console.error("Cloudinary Upload Error:", JSON.stringify(data, null, 2));
       throw new Error(data?.error?.message || "Upload failed");
     }
 
@@ -99,14 +99,14 @@ export function AddBookForm({ onBookAdded }: Props) {
           setFile(null);
           onBookAdded();
         },
-        onError: (err) => {
-          console.error("GraphQL mutation error:", err);
+        onError: () => {
+          //console.error("GraphQL mutation error:", err);
           toast.error("Something went wrong while adding the book.");
         },
       });
-    } catch (err: any) {
+    } catch {
       toast.dismiss();
-      toast.error("Image upload failed: " + err.message);
+      //toast.error("Image upload failed: " + err.message);
     }
   };
 

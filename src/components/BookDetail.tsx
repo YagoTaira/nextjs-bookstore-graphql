@@ -44,7 +44,6 @@ export function BookDetail({ queryRef }: Props) {
   const book = data.book;
   if (!book) return <p className="text-center p-4">Book not found.</p>;
 
-  const fav = isFavourite(book.id);
   const inCart = isInCart(book.id);
 
   const imageUrl = book.imageUrl ?? "/images/fallback.jpg";
@@ -102,7 +101,7 @@ export function BookDetail({ queryRef }: Props) {
         <button
           onClick={() => {
             if (!book.id) {
-              console.error("Cannot add book without _id to cart.");
+              //console.error("Cannot add book without _id to cart.");
               return;
             }
             addToCart(book);

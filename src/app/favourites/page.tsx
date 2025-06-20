@@ -42,7 +42,7 @@ function FavouritesPage() {
         ❤️ Your Favourites
       </h1>
       <div className="grid gap-6 mt-8 sm:grid-cols-2 lg:grid-cols-3 animate-fade-in">
-        {favourites.map((book, index) => (
+        {favourites.map((book) => (
           <div
             key={book._id?.toString()}
             className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 p-6 flex flex-col justify-between"
