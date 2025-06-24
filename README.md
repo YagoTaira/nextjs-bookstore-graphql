@@ -154,7 +154,6 @@ book-store-app/
 
 ## 📌 To Do
 
-- Fix Book not being added to cart list
 - Enable admin to edit book details
 - Add more tests
 
