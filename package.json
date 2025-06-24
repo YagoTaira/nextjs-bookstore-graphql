@@ -8,9 +8,9 @@
     "start": "next start",
     "lint": "next lint",
     "relay": "relay-compiler",
-    "seed": "tsx scripts/seed.ts",
+    "seed": "tsx scripts/seedBooks.ts",
     "test": "playwright test",
-    "seed:test-user": "tsx scripts/seed-test-user.ts"
+    "seed:test-user": "tsx scripts/seedUsers.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.2",
