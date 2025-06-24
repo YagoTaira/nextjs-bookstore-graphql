@@ -4,6 +4,7 @@ import { Cart } from "@/models/Cart";
 import { getUserFromRequest } from "@/lib/getUser";
 import { BookType } from "@/models/models";
 import { CartItemGQL } from "@/graphql/types";
+import { CartItemInput } from "@/graphql/types";
 
 export async function GET(req: NextRequest) {
   await connectToDatabase();
@@ -47,18 +48,18 @@ export async function POST(req: NextRequest) {
   if (!user)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-  //const { items } = await req.json();
+  const { items } = await req.json();
 
-  //const normalizedItems = items.map((item: any) => ({
-  //  bookId: item.bookId,
-  //  quantity: item.quantity,
-  //}));
+  const normalizedItems = items.map((item: CartItemInput) => ({
+    bookId: item.bookId,
+    quantity: item.quantity,
+  }));
 
-  //const updatedCart = await Cart.findOneAndUpdate(
-  //  { userId: user.id },
-  //  { items: normalizedItems },
-  //  { upsert: true, new: true }
-  //);
+  await Cart.findOneAndUpdate(
+    { userId: user.id },
+    { items: normalizedItems },
+    { upsert: true, new: true }
+  );
 
   return NextResponse.json({ message: "Cart updated" });
 }

@@ -14,4 +14,9 @@ export type CartItemGQL = BookGQL & {
   quantity: number;
 };
 
+export type CartItemInput = {
+  bookId: string;
+  quantity: number;
+};
+
 export type BookWithId = BookType & { _id: string };
